@@ -1,0 +1,180 @@
+📌 🔥 MUST-KNOW GraphQL Commands (Super Useful for Bug Bounty + Learning)
+
+GraphQL isn’t CLI commands — it's query language syntax — but I’ll give you:
+
+Essential Queries
+
+Mutations
+
+Introspection commands
+
+Security testing queries
+
+Common cheat sheet patterns
+
+📚 1. Basic GraphQL Query Structure
+{
+  user(id: 1) {
+    id
+    name
+    email
+  }
+}
+
+✍🏽 2. Query With Nested Fields
+{
+  user(id: 1) {
+    name
+    orders {
+      id
+      total
+      status
+    }
+  }
+}
+
+🔄 3. Mutation (GraphQL version of POST request)
+mutation {
+  updateUser(id: 1, input: { name: "Omni" }) {
+    id
+    name
+  }
+}
+
+🧠 4. GraphQL Introspection (HACKER GOLD)
+
+This is how you enumerate EVERYTHING in the schema.
+
+⭐ Full schema dump
+{
+  __schema {
+    types {
+      name
+      fields {
+        name
+      }
+    }
+  }
+}
+
+List all queries & mutations
+{
+  __schema {
+    queryType { name }
+    mutationType { name }
+  }
+}
+
+Find hidden fields
+{
+  __type(name: "User") {
+    name
+    fields {
+      name
+      type {
+        name
+      }
+    }
+  }
+}
+
+🧨 5. IDOR Testing in GraphQL
+{
+  user(id: 2) {
+    email
+    role
+    orders {
+      id
+      total
+    }
+  }
+}
+
+
+If the app returns someone else’s data → IDOR/BOLA.
+
+🔐 6. Sensitive Field Discovery
+
+Try asking for dangerous fields:
+
+{
+  user(id: 1) {
+    password
+    token
+    resetToken
+    permissions
+  }
+}
+
+
+If any of these return → HIGH severity vulnerability.
+
+🕵🏽‍♀️ 7. Search Function Abuse
+
+If the API has a search field:
+
+{
+  searchUsers(query: "a") {
+    id
+    email
+    phone
+  }
+}
+
+
+This often leaks full directory listings.
+
+🔄 8. Pagination Enumeration
+{
+  users(limit: 50, offset: 0) {
+    id
+    email
+  }
+}
+
+
+Change offsets to enumerate ALL users.
+
+🧩 9. Error-Based Enumeration
+
+If a field doesn’t exist, GraphQL may leak:
+
+valid fields
+
+internal types
+
+stack traces
+
+Test:
+
+{
+  user(id: "abc") {
+    doesNotExist
+  }
+}
+
+📝 10. Aliases (VERY powerful)
+
+You can request the same field multiple times:
+
+{
+  user1: user(id: 1) { email }
+  user2: user(id: 2) { email }
+  user3: user(id: 3) { email }
+}
+
+
+This is how hackers enumerate much faster.
+
+📦 Want me to build the actual GitHub repo for you?
+
+I can write:
+
+✨ A full README.md
+✨ A GraphQL cheat sheet
+✨ A folder structure
+✨ Example queries/mutations
+✨ A security testing section
+✨ A GraphQL + Bug Bounty workflow
+
+Just say:
