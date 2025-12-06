@@ -1,0 +1,158 @@
+Your schema revealed these query types:
+
+✔ node(id: ...)
+✔ user
+✔ findUser
+✔ findBug
+✔ allUsers
+✔ allBugs
+
+Each one works differently and gives access to different kinds of data.
+
+Let’s break them down.
+
+💡 1️⃣ node(id: ...)
+
+This is the universal fetcher.
+
+You give it a Base64 ID → it returns the actual object.
+
+Example:
+
+node(id: "QnVnczox") {
+  ...on Bugs {
+    text
+  }
+}
+
+
+This is powerful because:
+
+👉 ANY object type that implements Node can be fetched
+👉 If the UI hides it, node() can still reveal it
+👉 Flags are often hidden behind nodes
+
+💡 2️⃣ allUsers
+
+This returns a connection, not a list.
+
+Meaning it comes with:
+
+pageInfo
+
+edges
+
+node
+
+So you must write:
+
+allUsers {
+  edges {
+    node {
+      id
+      username
+    }
+  }
+}
+
+
+Use this to:
+
+👉 enumerate all users
+👉 find hidden admin accounts
+👉 find suspicious usernames
+👉 extract IDs for use with node()
+
+💡 3️⃣ allBugs
+
+Same structure as users:
+
+allBugs {
+  edges {
+    node {
+      id
+      text
+    }
+  }
+}
+
+
+Use this to:
+
+👉 list EVERY bug entry
+👉 find hidden bugs
+👉 locate suspicious text
+👉 find a bug that contains the flag
+
+💡 4️⃣ findBug(id: ...)
+
+This lets you fetch a specific bug by number.
+
+Example:
+
+findBug(id: 3) {
+  id
+  text
+}
+
+
+Use this when:
+
+👉 the bug exists but is not shown in listings
+👉 you want to try IDs 1–20 to uncover hidden bugs
+
+💡 5️⃣ findUser(id: ...)
+
+Same idea — get a specific user.
+
+Use this to:
+
+👉 fetch a user found in allUsers
+👉 explore fields that might hide a flag
+
+⭐ WHY THIS IS IMPORTANT IN BUGDB v2
+
+BugDB v2 is designed to FORCE you to use different query types to:
+
+✔ enumerate data
+✔ pivot through objects
+✔ uncover hidden relationships
+✔ fetch nodes the UI doesn’t show
+
+The flag is ALWAYS in one of these nodes.
+
+⭐ SUPER SIMPLE SUMMARY BESTIE:
+👉 Yes, GraphQL has multiple query types
+👉 Each one returns different shapes of data
+👉 You MUST use all of them to uncover hidden objects
+👉 BugDB v2 intentionally hides the flag inside one of these
+⭐ NOW YOUR NEXT STEP:
+
+Run these two queries:
+
+✔ 1. allUsers
+{
+  allUsers {
+    edges {
+      node {
+        id
+        username
+      }
+    }
+  }
+}
+
+✔ 2. allBugs
+{
+  allBugs {
+    edges {
+      node {
+        id
+        text
+      }
+    }
+  }
+}
+
+
+Send me
